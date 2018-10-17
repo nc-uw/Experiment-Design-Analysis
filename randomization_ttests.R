@@ -1,4 +1,4 @@
-setwd('~/Documents/STAT502/HW')
+setwd('~/Documents/')
 getwd()
 set.seed(777)
 data <- readRDS('Plants.RDS')
@@ -11,7 +11,6 @@ data2 <- data[data$group == 2,]
 data1_wgt <- data1$weight
 data2_wgt <- data2$weight
 
-##Q3a - start
 #compute mean
 mean1_wgt <- mean(data1_wgt)
 mean2_wgt <- mean(data2_wgt)
@@ -29,9 +28,8 @@ p1 <- ecdf(data1_wgt)
 plot(p1)
 p2 <- ecdf(data2_wgt)
 plot(p2)
-##Q3a - stop
 
-#quantile stats: check why fivenum?
+#quantile stats:
 summary(fivenum(data1_wgt))
 summary(fivenum(data2_wgt))
 
@@ -48,12 +46,10 @@ g.vr <- function(a, b){
   return(y)
 }
 
-##Q3.b.i - start
 sample_ks = g.ks(data1_wgt, data2_wgt)
 sample_vr = g.vr(data1_wgt, data2_wgt)
-##Q3.b.i - stop
 
-##Q3.b.ii - start
+#run monte carlo randomizaion with replacement
 Gsim <- NULL
 for (s in 1:1e4)
 {
@@ -68,6 +64,7 @@ for (s in 1:1e4)
   if (s%%1e3 == 0) {print(s)}
 }
 
+#plot histogram
 hist(Gsim[,1],
      col="blue",
      xlab="KS Stat",
@@ -79,23 +76,18 @@ hist(Gsim[,2],
      xlab="VR Stat",
      main="Histogram of VR Stat",
      freq=F)
-##Q3.b.ii - stop
 
-##Q3.b.iii
+#compute p value
 pval_ks = mean(Gsim[,1] >= sample_ks)
 pval_vr = mean(Gsim[,2] >= sample_vr)
 
-
-##Q3.C
-alpha = 0.05
-prob = 1 - (1-alpha)**2
-
-##Q4
+#demonstration of exact randomization test for y and x
 y <- c(256, 159, 149, 54, 123, 248)
 x <- c('R', 'R', 'R', 'N', 'N', 'N')
 g1.obs <- abs( mean(y[x=="R" ]) - mean(y[x=="N" ]) )
 g2.obs <- abs( t.test(y[x=="R"], y[x=="N"], var.equal=TRUE)$stat )
 
+#create all posible combinations for exact test
 n.combs <- choose(6,3)
 all.combs <- combn(6,3)
 dim(all.combs)
